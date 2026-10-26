@@ -117,6 +117,16 @@ def register(body: RegisterRequest):
 
 
 # ---------------------------------------------------------------------------
+# 3. Excessive Data Exposure FIX  (API3:2023)
+#    Response model returns only id, name, email. Declared before the
+#    /{user_id} route so "me" is not parsed as an int.
+# ---------------------------------------------------------------------------
+@app.get("/api/v1/users/me", response_model=UserPublic)
+def read_me(current_user: dict = Depends(get_current_user)):
+    return current_user
+
+
+# ---------------------------------------------------------------------------
 # 1. BOLA FIX  (API1:2023)
 #    A user may read only their own record, unless they are an admin.
 # ---------------------------------------------------------------------------
@@ -142,15 +152,6 @@ def delete_user(user_id: int, admin: dict = Depends(require_admin_role)):
         raise HTTPException(status_code=404, detail="User not found")
     database.USERS.remove(target)
     return {"message": f"user {user_id} deleted", "deleted_by": admin["email"]}
-
-
-# ---------------------------------------------------------------------------
-# 3. Excessive Data Exposure FIX  (API3:2023)
-#    Response model returns only id, name, email.
-# ---------------------------------------------------------------------------
-@app.get("/api/v1/users/me", response_model=UserPublic)
-def read_me(current_user: dict = Depends(get_current_user)):
-    return current_user
 
 
 # ---------------------------------------------------------------------------

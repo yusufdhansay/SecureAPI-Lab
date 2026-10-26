@@ -95,6 +95,24 @@ def login(body: LoginRequest):
 # ===========================================================================
 
 # ---------------------------------------------------------------------------
+# NOTE on route order: /api/v1/users/me is declared BEFORE
+# /api/v1/users/{user_id} so that the literal "me" is not parsed as an int.
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# 3. Excessive Data Exposure  (OWASP API3:2023)
+#
+# [VULN] /users/me returns the raw user object, including password_hash,
+# secret_aadhaar and internal_api_key. The API relies on the client to
+# filter fields, which it never should.
+# ---------------------------------------------------------------------------
+@app.get("/api/v1/users/me")
+def read_me(current_user: dict = Depends(get_current_user)):
+    """Return the full, unfiltered user object (Excessive Data Exposure)."""
+    return current_user
+
+
+# ---------------------------------------------------------------------------
 # 1. BOLA / IDOR  (OWASP API1:2023 - Broken Object Level Authorization)
 #
 # [VULN] Any caller can fetch ANY user's full record just by changing the
@@ -128,19 +146,6 @@ def delete_user(user_id: int, current_user: dict = Depends(get_current_user)):
         "message": f"user {user_id} deleted",
         "deleted_by": current_user["email"],
     }
-
-
-# ---------------------------------------------------------------------------
-# 3. Excessive Data Exposure  (OWASP API3:2023)
-#
-# [VULN] /users/me returns the raw user object, including password_hash,
-# secret_aadhaar and internal_api_key. The API relies on the client to
-# filter fields, which it never should.
-# ---------------------------------------------------------------------------
-@app.get("/api/v1/users/me")
-def read_me(current_user: dict = Depends(get_current_user)):
-    """Return the full, unfiltered user object (Excessive Data Exposure)."""
-    return current_user
 
 
 # ---------------------------------------------------------------------------

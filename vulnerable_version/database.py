@@ -27,7 +27,7 @@ USERS = [
     {
         "id": 1,
         "name": "Admin User",
-        "email": "admin@apilab.local",
+        "email": "admin@apilab.com",
         "password_hash": hash_password("admin123"),
         "role": "admin",
         "secret_aadhaar": "1234-5678-9012",
@@ -36,7 +36,7 @@ USERS = [
     {
         "id": 2,
         "name": "Alice Kumar",
-        "email": "alice@apilab.local",
+        "email": "alice@apilab.com",
         "password_hash": hash_password("alice123"),
         "role": "user",
         "secret_aadhaar": "2345-6789-0123",
@@ -45,7 +45,7 @@ USERS = [
     {
         "id": 3,
         "name": "Bob Sharma",
-        "email": "bob@apilab.local",
+        "email": "bob@apilab.com",
         "password_hash": hash_password("bob123"),
         "role": "user",
         "secret_aadhaar": "3456-7890-1234",
